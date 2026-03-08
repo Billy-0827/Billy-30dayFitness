@@ -4,6 +4,7 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>30 Day Fitness Coach</title>
 
 <link rel="apple-touch-icon" href="icon.png">
@@ -12,9 +13,9 @@
 
 body{
 font-family:Arial;
-background:#121212;
+background:#111;
 color:white;
-padding:20px;
+padding:15px;
 text-align:center;
 }
 
@@ -22,34 +23,36 @@ h1{color:#00e676}
 
 .card{
 background:#1e1e1e;
-padding:20px;
+padding:18px;
 border-radius:12px;
-margin:15px;
+margin:15px 0;
 }
 
 .exercise{
 padding:10px;
 border-bottom:1px solid #333;
-cursor:pointer;
-}
-
-.exercise:hover{
-color:#00e676;
 }
 
 .timer{
-font-size:40px;
-margin:20px;
+font-size:42px;
+margin:15px;
 }
 
 button{
-padding:12px;
-margin:8px;
+padding:14px;
+margin:6px;
+font-size:16px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:#00c853;
 color:white;
-font-size:16px;
+}
+
+input{
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
 }
 
 </style>
@@ -62,24 +65,27 @@ font-size:16px;
 
 <div class="card">
 
-<h2>3 Minute Warmup</h2>
+<h2 id="dayTitle"></h2>
 
-<div class="exercise" onclick="demo('jumping jacks exercise')">30 sec Jumping Jacks</div>
-<div class="exercise" onclick="demo('arm circles exercise')">30 sec Arm Circles</div>
-<div class="exercise" onclick="demo('bodyweight squat exercise')">30 sec Bodyweight Squats</div>
-<div class="exercise" onclick="demo('high knees exercise')">30 sec High Knees</div>
-<div class="exercise" onclick="demo('torso twist exercise')">30 sec Torso Twists</div>
-<div class="exercise">30 sec Light Stretch</div>
+<div id="workout"></div>
 
 </div>
 
 <div class="card">
 
-<h2 id="dayTitle"></h2>
+<h2>Guided Workout</h2>
 
-<div id="strength"></div>
+<div id="currentExercise">Press Start</div>
 
-<h3>Treadmill</h3>
+<div class="timer" id="timer">0:30</div>
+
+<button onclick="startWorkout()">Start Workout</button>
+
+</div>
+
+<div class="card">
+
+<h2>Treadmill</h2>
 
 <div id="treadmill"></div>
 
@@ -87,9 +93,19 @@ font-size:16px;
 
 <div class="card">
 
-<div class="timer" id="timer">20:00</div>
+<h2>Progress Tracker</h2>
 
-<button onclick="startTimer()">Start Workout</button> <button onclick="nextDay()">Next Day</button>
+Weight (kg)<br> <input id="weight">
+
+<br>
+
+Waist (inches)<br> <input id="waist">
+
+<br>
+
+<button onclick="saveProgress()">Save Progress</button>
+
+<canvas id="chart" width="300" height="200"></canvas>
 
 </div>
 
@@ -99,141 +115,94 @@ let workouts=[
 
 {
 title:"Day 1",
-strength:[
-["10 Dumbbell Squats","dumbbell squat exercise"],
-["10 Pushups","push up exercise"],
-["10 Dumbbell Rows","dumbbell row exercise"],
-["20 Mountain Climbers","mountain climbers exercise"]
-],
-rounds:"Repeat 3 rounds",
-treadmill:"5 minutes fast walk"
+exercises:["Dumbbell Squats","Pushups","Dumbbell Rows","Mountain Climbers"],
+reps:["10","10","10","20"],
+treadmill:"5 minute fast walk"
 },
 
 {
 title:"Day 2",
-strength:[
-["10 Lunges each leg","lunge exercise"],
-["12 Dumbbell Shoulder Press","shoulder press exercise"],
-["15 Crunches","crunch exercise"],
-["20 High Knees","high knees exercise"]
-],
-rounds:"Repeat 3 rounds",
-treadmill:"5 minutes incline walk"
-},
-
-{
-title:"Day 3",
-strength:[
-["30 sec Jumping Jacks","jumping jacks exercise"],
-["30 sec Mountain Climbers","mountain climbers exercise"],
-["30 sec Squats","bodyweight squat exercise"]
-],
-rounds:"Repeat 4 rounds",
-treadmill:"5 minutes brisk walk"
-},
-
-{
-title:"Day 4",
-strength:[
-["12 Dumbbell Rows","dumbbell row exercise"],
-["10 Pushups","push up exercise"],
-["12 Shoulder Press","shoulder press exercise"],
-["20 Bicycle Crunches","bicycle crunch exercise"]
-],
-rounds:"Repeat 3 rounds",
-treadmill:"Light jog or fast walk for 5 minutes"
-},
-
-{
-title:"Day 5",
-strength:[
-["12 Goblet Squats","goblet squat exercise"],
-["10 Reverse Lunges","reverse lunge exercise"],
-["15 Glute Bridges","glute bridge exercise"],
-["30 High Knees","high knees exercise"]
-],
-rounds:"Repeat 3 rounds",
+exercises:["Lunges","Shoulder Press","Crunches","High Knees"],
+reps:["10 each leg","12","15","20"],
 treadmill:"5 minute incline walk"
 },
 
 {
-title:"Day 6",
-strength:[
-["10 Squat + Dumbbell Press","dumbbell thruster exercise"],
-["10 Pushups","push up exercise"],
-["12 Dumbbell Rows","dumbbell row exercise"],
-["20 Mountain Climbers","mountain climbers exercise"]
-],
-rounds:"Repeat 4 rounds",
-treadmill:"Moderate walk 5 minutes"
-},
-
-{
-title:"Day 7",
-strength:[["Rest Day",""]],
-rounds:"",
-treadmill:"Optional 20-30 minute walk"
+title:"Day 3",
+exercises:["Jumping Jacks","Mountain Climbers","Squats"],
+reps:["30 sec","30 sec","30 sec"],
+treadmill:"5 minute brisk walk"
 }
 
 ]
 
 let day=localStorage.getItem("day") || 1
-let time=1200
-let timer
-
-function loadDay(){
-
-let index=(day-1)%7
+let index=(day-1)%workouts.length
 let data=workouts[index]
 
-document.getElementById("dayTitle").innerHTML=data.title
+document.getElementById("dayTitle").innerHTML="Day "+day
 
 let html=""
 
-data.strength.forEach(ex=>{
+data.exercises.forEach((ex,i)=>{
 
-if(ex[0]=="Rest Day"){
-html+="Rest day"
-}else{
-html+=`<div class="exercise" onclick="demo('${ex[1]}')">${ex[0]}</div>`
-}
+html+=`<div class="exercise">${data.reps[i]} ${ex}</div>`
 
 })
 
-html+=`<p>${data.rounds}</p>`
-
-document.getElementById("strength").innerHTML=html
+document.getElementById("workout").innerHTML=html
 
 document.getElementById("treadmill").innerHTML=data.treadmill
 
+let exerciseIndex=0
+let time=30
+let timer
+
+function speak(text){
+
+let msg=new SpeechSynthesisUtterance(text)
+speechSynthesis.speak(msg)
+
 }
 
-function demo(name){
+function startWorkout(){
 
-let url="https://www.youtube.com/results?search_query="+name
-window.open(url)
+exerciseIndex=0
+nextExercise()
 
 }
 
-function startTimer(){
+function nextExercise(){
 
-clearInterval(timer)
+if(exerciseIndex>=data.exercises.length){
+
+document.getElementById("currentExercise").innerHTML="Workout complete!"
+speak("Workout complete")
+return
+
+}
+
+let name=data.exercises[exerciseIndex]
+
+document.getElementById("currentExercise").innerHTML=name
+
+speak("Next exercise "+name)
+
+time=30
 
 timer=setInterval(function(){
 
 time--
 
-let m=Math.floor(time/60)
-let s=time%60
-
-if(s<10)s="0"+s
-
-document.getElementById("timer").innerHTML=m+":"+s
+document.getElementById("timer").innerHTML="0:"+time
 
 if(time<=0){
 
 clearInterval(timer)
-alert("Workout complete!")
+
+exerciseIndex++
+
+nextExercise()
 
 }
 
@@ -241,22 +210,48 @@ alert("Workout complete!")
 
 }
 
-function nextDay(){
+function saveProgress(){
 
-day++
+let weight=document.getElementById("weight").value
+let waist=document.getElementById("waist").value
 
-if(day>30)day=1
+let data=JSON.parse(localStorage.getItem("progress") || "[]")
 
-localStorage.setItem("day",day)
+data.push({weight,waist})
 
-time=1200
-document.getElementById("timer").innerHTML="20:00"
+localStorage.setItem("progress",JSON.stringify(data))
 
-loadDay()
+drawChart()
 
 }
 
-loadDay()
+function drawChart(){
+
+let canvas=document.getElementById("chart")
+let ctx=canvas.getContext("2d")
+
+let data=JSON.parse(localStorage.getItem("progress") || "[]")
+
+ctx.clearRect(0,0,300,200)
+
+ctx.beginPath()
+
+data.forEach((p,i)=>{
+
+let x=i*40+20
+let y=200-(p.weight*2)
+
+if(i==0)ctx.moveTo(x,y)
+else ctx.lineTo(x,y)
+
+})
+
+ctx.strokeStyle="#00e676"
+ctx.stroke()
+
+}
+
+drawChart()
 
 </script>
 
