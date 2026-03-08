@@ -4,22 +4,21 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>30 Day Fitness Coach</title>
+
+<link rel="apple-touch-icon" href="icon.png">
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#121212;
 color:white;
 text-align:center;
 padding:20px;
 }
 
-h1{
-color:#00e676;
-}
+h1{color:#00e676}
 
 .card{
 background:#1e1e1e;
@@ -43,11 +42,14 @@ font-size:42px;
 margin:20px;
 }
 
-input{
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:none;
+.exercise{
+padding:8px;
+cursor:pointer;
+border-bottom:1px solid #333;
+}
+
+.exercise:hover{
+color:#00e676;
 }
 
 </style>
@@ -60,7 +62,19 @@ border:none;
 
 <div class="card">
 
-<h2 id="dayTitle">Day 1</h2>
+<h2>Warm-Up (3 minutes)</h2>
+
+<div class="exercise" onclick="showDemo('jumping jacks exercise')">Jumping Jacks</div>
+<div class="exercise" onclick="showDemo('arm circles exercise')">Arm Circles</div>
+<div class="exercise" onclick="showDemo('bodyweight squats exercise')">Bodyweight Squats</div>
+<div class="exercise" onclick="showDemo('high knees exercise')">High Knees</div>
+<div class="exercise" onclick="showDemo('torso twists exercise')">Torso Twists</div>
+
+</div>
+
+<div class="card">
+
+<h2 id="dayTitle">Day 1 Workout</h2>
 
 <div id="workout"></div>
 
@@ -78,13 +92,13 @@ border:none;
 
 <h3>Progress Tracker</h3>
 
-Weight (kg) <br> <input id="weight">
+Weight (kg)<br> <input id="weight">
 
-<br>
+<br><br>
 
-Waist (inches) <br> <input id="waist">
+Waist (inches)<br> <input id="waist">
 
-<br>
+<br><br>
 
 <button onclick="saveProgress()">Save Progress</button>
 
@@ -96,35 +110,88 @@ Waist (inches) <br> <input id="waist">
 
 let workouts=[
 
-"10 Dumbbell Squats<br>10 Pushups<br>10 Dumbbell Rows<br>20 Mountain Climbers<br><br>Repeat 3 rounds",
+[
+["Dumbbell Squats","dumbbell squat exercise"],
+["Pushups","push up exercise"],
+["Dumbbell Rows","dumbbell row exercise"],
+["Mountain Climbers","mountain climbers exercise"]
+],
 
-"10 Lunges each leg<br>12 Shoulder Press<br>15 Crunches<br>20 High Knees<br><br>Repeat 3 rounds",
+[
+["Lunges","lunge exercise"],
+["Shoulder Press","dumbbell shoulder press exercise"],
+["Crunches","crunch exercise"],
+["High Knees","high knees exercise"]
+],
 
-"30 sec Jumping Jacks<br>30 sec Mountain Climbers<br>30 sec Squats<br>30 sec Rest<br><br>Repeat 4 rounds",
+[
+["Jumping Jacks","jumping jacks exercise"],
+["Mountain Climbers","mountain climbers exercise"],
+["Squats","bodyweight squat exercise"]
+],
 
-"12 Dumbbell Rows<br>10 Pushups<br>12 Shoulder Press<br>20 Bicycle Crunches<br><br>Repeat 3 rounds",
+[
+["Dumbbell Rows","dumbbell row exercise"],
+["Pushups","push up exercise"],
+["Shoulder Press","shoulder press exercise"],
+["Bicycle Crunch","bicycle crunch exercise"]
+],
 
-"12 Goblet Squats<br>10 Reverse Lunges<br>15 Glute Bridges<br>30 High Knees<br><br>Repeat 3 rounds",
+[
+["Goblet Squats","goblet squat exercise"],
+["Reverse Lunges","reverse lunge exercise"],
+["Glute Bridges","glute bridge exercise"],
+["High Knees","high knees exercise"]
+],
 
-"10 Squat + Dumbbell Press<br>10 Pushups<br>12 Dumbbell Rows<br>20 Mountain Climbers<br><br>Repeat 4 rounds",
+[
+["Squat + Dumbbell Press","dumbbell thruster exercise"],
+["Pushups","push up exercise"],
+["Dumbbell Rows","dumbbell row exercise"],
+["Mountain Climbers","mountain climbers exercise"]
+],
 
-"REST DAY<br><br>Optional 20-30 minute walk"
+[
+["REST DAY",""]
+]
 
 ]
 
 let day=localStorage.getItem("day") || 1
-
 let time=1200
-
 let timer
 
 function loadDay(){
 
-let workoutIndex=(day-1)%7
+let index=(day-1)%7
 
 document.getElementById("dayTitle").innerHTML="Day "+day
 
-document.getElementById("workout").innerHTML=workouts[workoutIndex]
+let html=""
+
+workouts[index].forEach(ex=>{
+
+if(ex[0]=="REST DAY"){
+
+html+="Rest Day – Optional 20-30 min walk"
+
+}else{
+
+html+=`<div class="exercise" onclick="showDemo('${ex[1]}')">${ex[0]}</div>`
+
+}
+
+})
+
+document.getElementById("workout").innerHTML=html
+
+}
+
+function showDemo(name){
+
+let url="https://www.youtube.com/results?search_query="+name
+
+window.open(url)
 
 }
 
@@ -139,7 +206,6 @@ timer=setInterval(function(){
 time--
 
 let m=Math.floor(time/60)
-
 let s=time%60
 
 if(s<10)s="0"+s
@@ -149,7 +215,6 @@ document.getElementById("timer").innerHTML=m+":"+s
 if(time<=0){
 
 clearInterval(timer)
-
 alert("Workout complete! Great job!")
 
 }
@@ -167,7 +232,6 @@ if(day>30)day=1
 localStorage.setItem("day",day)
 
 time=1200
-
 document.getElementById("timer").innerHTML="20:00"
 
 loadDay()
@@ -177,37 +241,17 @@ loadDay()
 function saveProgress(){
 
 let weight=document.getElementById("weight").value
-
 let waist=document.getElementById("waist").value
 
 localStorage.setItem("weight",weight)
-
 localStorage.setItem("waist",waist)
 
 document.getElementById("progressDisplay").innerHTML=
-
 "Weight: "+weight+" kg<br>Waist: "+waist+" inches"
-
-}
-
-window.onload=function(){
-
-let weight=localStorage.getItem("weight")
-
-let waist=localStorage.getItem("waist")
-
-if(weight){
-
-document.getElementById("progressDisplay").innerHTML=
-
-"Weight: "+weight+" kg<br>Waist: "+waist+" inches"
-
-}
 
 }
 
 </script>
 
 </body>
-
 </html>
