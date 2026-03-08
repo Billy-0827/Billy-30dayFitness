@@ -52,6 +52,40 @@ color:white;
 font-size:16px;
 }
 
+.complete{
+color:#00e676;
+font-weight:bold;
+}
+
+.progressBoard{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:6px;
+margin-top:10px;
+}
+
+.dayBox{
+padding:8px;
+background:#2a2a2a;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.dayBox:hover{
+background:#3a3a3a;
+}
+
+.dayComplete{
+background:#00c853;
+color:black;
+font-weight:bold;
+}
+
+.dayCurrent{
+border:2px solid #00e676;
+}
+
 </style>
 
 </head>
@@ -59,6 +93,14 @@ font-size:16px;
 <body>
 
 <h1>30 Day Fitness Coach</h1>
+
+<div class="card">
+
+<h2>Progress</h2>
+
+<div id="progressBoard" class="progressBoard"></div>
+
+</div>
 
 <div class="card">
 
@@ -77,6 +119,8 @@ font-size:16px;
 
 <h2 id="dayTitle"></h2>
 
+<div id="completionStatus"></div>
+
 <div id="strength"></div>
 
 <h3>Treadmill</h3>
@@ -89,7 +133,7 @@ font-size:16px;
 
 <div class="timer" id="timer">20:00</div>
 
-<button onclick="startTimer()">Start Workout</button> <button onclick="nextDay()">Next Day</button>
+<button onclick="startTimer()">Start Workout</button> <button onclick="prevDay()">Previous Day</button> <button onclick="completeDay()">Mark Complete ✓</button> <button onclick="nextDay()">Next Day</button>
 
 </div>
 
@@ -118,9 +162,7 @@ torso_twist:"https://www.youtube.com/watch?v=wkD8rjkodUI"
 }
 
 function demo(name){
-
 window.open(videoLinks[name])
-
 }
 
 let workouts=[
@@ -205,16 +247,61 @@ treadmill:"Optional 20–30 minute walk"
 
 ]
 
-let day=localStorage.getItem("day") || 1
+let day=parseInt(localStorage.getItem("day") || 1)
 let time=1200
 let timer
 
+function drawProgressBoard(){
+
+let completed=JSON.parse(localStorage.getItem("completedDays") || "[]")
+
+let board=""
+
+for(let i=1;i<=30;i++){
+
+let cls="dayBox"
+
+if(completed.includes(i)) cls+=" dayComplete"
+
+if(i===day) cls+=" dayCurrent"
+
+board+=`<div class="${cls}" onclick="jumpDay(${i})">Day ${i}</div>`
+
+}
+
+document.getElementById("progressBoard").innerHTML=board
+
+}
+
+function jumpDay(d){
+
+day=d
+localStorage.setItem("day",day)
+
+loadDay()
+
+}
+
 function loadDay(){
+
+drawProgressBoard()
 
 let index=(day-1)%7
 let data=workouts[index]
 
-document.getElementById("dayTitle").innerHTML=data.title
+document.getElementById("dayTitle").innerHTML="Day "+day
+
+let completed=JSON.parse(localStorage.getItem("completedDays") || "[]")
+
+if(completed.includes(day)){
+
+document.getElementById("completionStatus").innerHTML="<div class='complete'>✓ Completed</div>"
+
+}else{
+
+document.getElementById("completionStatus").innerHTML=""
+
+}
 
 let html=""
 
@@ -231,7 +318,6 @@ html+=`<div class="exercise" onclick="demo('${ex[1]}')">${ex[0]}</div>`
 html+=`<p>${data.rounds}</p>`
 
 document.getElementById("strength").innerHTML=html
-
 document.getElementById("treadmill").innerHTML=data.treadmill
 
 }
@@ -266,12 +352,40 @@ function nextDay(){
 
 day++
 
-if(day>30)day=1
+if(day>30) day=30
 
 localStorage.setItem("day",day)
 
 time=1200
 document.getElementById("timer").innerHTML="20:00"
+
+loadDay()
+
+}
+
+function prevDay(){
+
+day--
+
+if(day<1) day=1
+
+localStorage.setItem("day",day)
+
+loadDay()
+
+}
+
+function completeDay(){
+
+let completed=JSON.parse(localStorage.getItem("completedDays") || "[]")
+
+if(!completed.includes(day)){
+
+completed.push(day)
+
+localStorage.setItem("completedDays",JSON.stringify(completed))
+
+}
 
 loadDay()
 
