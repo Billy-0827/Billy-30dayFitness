@@ -64,11 +64,11 @@ font-size:16px;
 
 <h2>3 Minute Warmup</h2>
 
-<div class="exercise" onclick="demo('jumping jacks exercise')">30 sec Jumping Jacks</div>
-<div class="exercise" onclick="demo('arm circles exercise')">30 sec Arm Circles</div>
-<div class="exercise" onclick="demo('bodyweight squat exercise')">30 sec Bodyweight Squats</div>
-<div class="exercise" onclick="demo('high knees exercise')">30 sec High Knees</div>
-<div class="exercise" onclick="demo('torso twist exercise')">30 sec Torso Twists</div>
+<div class="exercise" onclick="demo('jumping_jacks')">30 sec Jumping Jacks</div>
+<div class="exercise" onclick="demo('arm_circles')">30 sec Arm Circles</div>
+<div class="exercise" onclick="demo('bodyweight_squat')">30 sec Bodyweight Squats</div>
+<div class="exercise" onclick="demo('high_knees')">30 sec High Knees</div>
+<div class="exercise" onclick="demo('torso_twist')">30 sec Torso Twists</div>
 <div class="exercise">30 sec Light Stretch</div>
 
 </div>
@@ -95,15 +95,43 @@ font-size:16px;
 
 <script>
 
+let videoLinks={
+
+pushup:"https://www.youtube.com/watch?v=_l3ySVKYVJ8",
+dumbbell_row:"https://www.youtube.com/watch?v=pYcpY20QaE8",
+dumbbell_squat:"https://www.youtube.com/watch?v=MeIiIdhvXT4",
+mountain_climber:"https://www.youtube.com/watch?v=nmwgirgXLYM",
+lunge:"https://www.youtube.com/watch?v=QOVaHwm-Q6U",
+shoulder_press:"https://www.youtube.com/watch?v=B-aVuyhvLHU",
+crunch:"https://www.youtube.com/watch?v=Xyd_fa5zoEU",
+high_knees:"https://www.youtube.com/watch?v=OAJ_J3EZkdY",
+bicycle_crunch:"https://www.youtube.com/watch?v=9FGilxCbdz8",
+goblet_squat:"https://www.youtube.com/watch?v=6xwGFn-J_Q0",
+reverse_lunge:"https://www.youtube.com/watch?v=wrwwXE_x-pQ",
+glute_bridge:"https://www.youtube.com/watch?v=wPM8icPu6H8",
+thruster:"https://www.youtube.com/watch?v=E1GkJdK5kR8",
+jumping_jacks:"https://www.youtube.com/watch?v=c4DAnQ6DtF8",
+arm_circles:"https://www.youtube.com/watch?v=140RTNMciH8",
+bodyweight_squat:"https://www.youtube.com/watch?v=aclHkVaku9U",
+torso_twist:"https://www.youtube.com/watch?v=wkD8rjkodUI"
+
+}
+
+function demo(name){
+
+window.open(videoLinks[name])
+
+}
+
 let workouts=[
 
 {
 title:"Day 1",
 strength:[
-["10 Dumbbell Squats","dumbbell squat exercise"],
-["10 Pushups","push up exercise"],
-["10 Dumbbell Rows","dumbbell row exercise"],
-["20 Mountain Climbers","mountain climbers exercise"]
+["10 Dumbbell Squats","dumbbell_squat"],
+["10 Pushups","pushup"],
+["10 Dumbbell Rows","dumbbell_row"],
+["20 Mountain Climbers","mountain_climber"]
 ],
 rounds:"Repeat 3 rounds",
 treadmill:"5 minutes fast walk"
@@ -112,10 +140,10 @@ treadmill:"5 minutes fast walk"
 {
 title:"Day 2",
 strength:[
-["10 Lunges each leg","lunge exercise"],
-["12 Dumbbell Shoulder Press","shoulder press exercise"],
-["15 Crunches","crunch exercise"],
-["20 High Knees","high knees exercise"]
+["10 Lunges each leg","lunge"],
+["12 Dumbbell Shoulder Press","shoulder_press"],
+["15 Crunches","crunch"],
+["20 High Knees","high_knees"]
 ],
 rounds:"Repeat 3 rounds",
 treadmill:"5 minutes incline walk"
@@ -124,9 +152,9 @@ treadmill:"5 minutes incline walk"
 {
 title:"Day 3",
 strength:[
-["30 sec Jumping Jacks","jumping jacks exercise"],
-["30 sec Mountain Climbers","mountain climbers exercise"],
-["30 sec Squats","bodyweight squat exercise"]
+["30 sec Jumping Jacks","jumping_jacks"],
+["30 sec Mountain Climbers","mountain_climber"],
+["30 sec Squats","bodyweight_squat"]
 ],
 rounds:"Repeat 4 rounds",
 treadmill:"5 minutes brisk walk"
@@ -135,22 +163,22 @@ treadmill:"5 minutes brisk walk"
 {
 title:"Day 4",
 strength:[
-["12 Dumbbell Rows","dumbbell row exercise"],
-["10 Pushups","push up exercise"],
-["12 Shoulder Press","shoulder press exercise"],
-["20 Bicycle Crunches","bicycle crunch exercise"]
+["12 Dumbbell Rows","dumbbell_row"],
+["10 Pushups","pushup"],
+["12 Shoulder Press","shoulder_press"],
+["20 Bicycle Crunches","bicycle_crunch"]
 ],
 rounds:"Repeat 3 rounds",
-treadmill:"Light jog or fast walk for 5 minutes"
+treadmill:"Light jog or fast walk 5 minutes"
 },
 
 {
 title:"Day 5",
 strength:[
-["12 Goblet Squats","goblet squat exercise"],
-["10 Reverse Lunges","reverse lunge exercise"],
-["15 Glute Bridges","glute bridge exercise"],
-["30 High Knees","high knees exercise"]
+["12 Goblet Squats","goblet_squat"],
+["10 Reverse Lunges","reverse_lunge"],
+["15 Glute Bridges","glute_bridge"],
+["30 High Knees","high_knees"]
 ],
 rounds:"Repeat 3 rounds",
 treadmill:"5 minute incline walk"
@@ -159,10 +187,10 @@ treadmill:"5 minute incline walk"
 {
 title:"Day 6",
 strength:[
-["10 Squat + Dumbbell Press","dumbbell thruster exercise"],
-["10 Pushups","push up exercise"],
-["12 Dumbbell Rows","dumbbell row exercise"],
-["20 Mountain Climbers","mountain climbers exercise"]
+["10 Squat + Dumbbell Press","thruster"],
+["10 Pushups","pushup"],
+["12 Dumbbell Rows","dumbbell_row"],
+["20 Mountain Climbers","mountain_climber"]
 ],
 rounds:"Repeat 4 rounds",
 treadmill:"Moderate walk 5 minutes"
@@ -172,7 +200,7 @@ treadmill:"Moderate walk 5 minutes"
 title:"Day 7",
 strength:[["Rest Day",""]],
 rounds:"",
-treadmill:"Optional 20-30 minute walk"
+treadmill:"Optional 20–30 minute walk"
 }
 
 ]
@@ -205,13 +233,6 @@ html+=`<p>${data.rounds}</p>`
 document.getElementById("strength").innerHTML=html
 
 document.getElementById("treadmill").innerHTML=data.treadmill
-
-}
-
-function demo(name){
-
-let url="https://www.youtube.com/results?search_query="+name
-window.open(url)
 
 }
 
