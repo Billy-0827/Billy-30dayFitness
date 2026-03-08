@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>30 Day Fitness Coach</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#121212;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+h1{
+color:#00e676;
+}
+
+.card{
+background:#1e1e1e;
+padding:20px;
+border-radius:12px;
+margin:15px;
+}
+
+button{
+padding:15px;
+margin:10px;
+font-size:16px;
+border:none;
+border-radius:10px;
+background:#00c853;
+color:white;
+}
+
+.timer{
+font-size:42px;
+margin:20px;
+}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>30 Day Fitness Coach</h1>
+
+<div class="card">
+
+<h2 id="dayTitle">Day 1</h2>
+
+<div id="workout"></div>
+
+</div>
+
+<div class="card">
+
+<div class="timer" id="timer">20:00</div>
+
+<button onclick="startWorkout()">Start Workout</button> <button onclick="nextDay()">Next Day</button>
+
+</div>
+
+<div class="card">
+
+<h3>Progress Tracker</h3>
+
+Weight (kg) <br> <input id="weight">
+
+<br>
+
+Waist (inches) <br> <input id="waist">
+
+<br>
+
+<button onclick="saveProgress()">Save Progress</button>
+
+<div id="progressDisplay"></div>
+
+</div>
+
+<script>
+
+let workouts=[
+
+"10 Dumbbell Squats<br>10 Pushups<br>10 Dumbbell Rows<br>20 Mountain Climbers<br><br>Repeat 3 rounds",
+
+"10 Lunges each leg<br>12 Shoulder Press<br>15 Crunches<br>20 High Knees<br><br>Repeat 3 rounds",
+
+"30 sec Jumping Jacks<br>30 sec Mountain Climbers<br>30 sec Squats<br>30 sec Rest<br><br>Repeat 4 rounds",
+
+"12 Dumbbell Rows<br>10 Pushups<br>12 Shoulder Press<br>20 Bicycle Crunches<br><br>Repeat 3 rounds",
+
+"12 Goblet Squats<br>10 Reverse Lunges<br>15 Glute Bridges<br>30 High Knees<br><br>Repeat 3 rounds",
+
+"10 Squat + Dumbbell Press<br>10 Pushups<br>12 Dumbbell Rows<br>20 Mountain Climbers<br><br>Repeat 4 rounds",
+
+"REST DAY<br><br>Optional 20-30 minute walk"
+
+]
+
+let day=localStorage.getItem("day") || 1
+
+let time=1200
+
+let timer
+
+function loadDay(){
+
+let workoutIndex=(day-1)%7
+
+document.getElementById("dayTitle").innerHTML="Day "+day
+
+document.getElementById("workout").innerHTML=workouts[workoutIndex]
+
+}
+
+loadDay()
+
+function startWorkout(){
+
+clearInterval(timer)
+
+timer=setInterval(function(){
+
+time--
+
+let m=Math.floor(time/60)
+
+let s=time%60
+
+if(s<10)s="0"+s
+
+document.getElementById("timer").innerHTML=m+":"+s
+
+if(time<=0){
+
+clearInterval(timer)
+
+alert("Workout complete! Great job!")
+
+}
+
+},1000)
+
+}
+
+function nextDay(){
+
+day++
+
+if(day>30)day=1
+
+localStorage.setItem("day",day)
+
+time=1200
+
+document.getElementById("timer").innerHTML="20:00"
+
+loadDay()
+
+}
+
+function saveProgress(){
+
+let weight=document.getElementById("weight").value
+
+let waist=document.getElementById("waist").value
+
+localStorage.setItem("weight",weight)
+
+localStorage.setItem("waist",waist)
+
+document.getElementById("progressDisplay").innerHTML=
+
+"Weight: "+weight+" kg<br>Waist: "+waist+" inches"
+
+}
+
+window.onload=function(){
+
+let weight=localStorage.getItem("weight")
+
+let waist=localStorage.getItem("waist")
+
+if(weight){
+
+document.getElementById("progressDisplay").innerHTML=
+
+"Weight: "+weight+" kg<br>Waist: "+waist+" inches"
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
